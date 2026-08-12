@@ -2,7 +2,7 @@
 
 **Know whether a Google Scholar result is a Research Paper or a Review Paper, directly in the search results.**
 
-During my academic journey, I noticed that many of my batchmates and other early-career researchers struggled to tell research papers and review papers apart while browsing Google Scholar. Both often look similar at a glance, especially when you're scanning a page full of results..
+During my academic journey, I noticed that many of my batchmates and other early-career researchers struggled to tell research papers and review papers apart while browsing Google Scholar. Both often look similar at a glance, especially when you're scanning a page full of results.
 
 Lens⁸¹ looks up each paper's abstract and adds a small badge next to the title, showing what the paper is most likely to be. This helps you spend more time reading the right papers instead of guessing.
 
