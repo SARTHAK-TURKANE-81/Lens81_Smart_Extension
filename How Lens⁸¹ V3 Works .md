@@ -141,6 +141,8 @@ if (successes.length === 0 && fallback.length > 0) {
 - A single successful "always" response is enough to skip the fallback
   tier entirely, even if other "always" rows failed.
 
+  
+
 ### 4.3 Parallel dispatch within a tier
 
 Within each tier, the **exact same prompt** is sent to every pair
