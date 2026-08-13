@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lens⁸¹</title>
+<style>
+  :root {
+    --ink: #12232a;
+    --muted: #5b7480;
+    --line: #d8ecef;
+    --bg: #ffffff;
+
+    --cyan: #06aed5;
+    --cyan-ink: #045a6b;
+    --cyan-tint: #e3f8fb;
+    --cyan-line: #bdeef5;
+
+    --amber: #e8871e;
+    --amber-ink: #8a4c0e;
+    --amber-tint: #fdeee1;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    width: 280px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    position: relative;
+  }
+  .wrap { padding: 16px 16px 22px; }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+  }
+  .mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  h1 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+  }
+  #gear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+  }
+  #gear:hover { background: var(--cyan-tint); color: var(--cyan-ink); }
+
+  p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+
+  /* Not-configured state */
+  #setup-cta {
+    display: none;
+  }
+  #setup-cta.show { display: block; }
+  .banner {
+    background: var(--cyan-tint);
+    border: 1px solid var(--cyan-line);
+    color: var(--cyan-ink);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  button.primary {
+    width: 100%;
+    font: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: var(--cyan);
+    color: #fff;
+  }
+  button.primary:hover { filter: brightness(0.95); }
+
+  /* Configured / stats state */
+  #stats {
+    display: none;
+  }
+  #stats.show { display: block; }
+  .counts {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .count-chip {
+    flex: 1;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .count-chip .n {
+    font-size: 20px;
+    font-weight: 700;
+    display: block;
+    line-height: 1.2;
+  }
+  .count-chip .label {
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .count-chip.research { background: var(--cyan-tint); }
+  .count-chip.research .n, .count-chip.research .label { color: var(--cyan-ink); }
+  .count-chip.review { background: var(--amber-tint); }
+  .count-chip.review .n, .count-chip.review .label { color: var(--amber-ink); }
+  #idle-note {
+    display: none;
+  }
+  #credit {
+    position: absolute;
+    bottom: 6px;
+    right: 10px;
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.6;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* --- Collections section ------------------------------------------------ */
+  .popup-divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 14px 0;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .section-head h2 {
+    font-size: 12.5px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--ink);
+  }
+  .mini-btn {
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--cyan-line);
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+    cursor: pointer;
+  }
+  .mini-btn:hover { filter: brightness(0.97); }
+  .export-menu { position: relative; }
+  .export-dropdown {
+    position: absolute;
+    right: 0;
+    top: 26px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 5;
+    min-width: 190px;
+  }
+  .export-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 8px 10px;
+    border: none;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .export-dropdown button:hover { background: var(--cyan-tint); }
+  .export-dropdown-divider {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--line);
+  }
+
+  #collections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 168px;
+    overflow-y: auto;
+    margin-bottom: 6px;
+  }
+  .collection-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 8px;
+    background: var(--bg, #f7fbfc);
+    cursor: pointer;
+    font-size: 12.5px;
+  }
+  .collection-row:hover { background: var(--cyan-tint); }
+  .collection-row .cname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .collection-row .ccount {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .collections-empty {
+    font-size: 11.5px;
+    color: var(--muted);
+    padding: 6px 2px 10px;
+    line-height: 1.5;
+  }
+  .new-collection-row {
+    width: 100%;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px dashed var(--cyan-line);
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+    cursor: pointer;
+  }
+  .new-collection-row:hover { filter: brightness(0.97); }
+  #new-collection-form { margin-top: 8px; }
+  #new-collection-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-family: inherit;
+    margin-bottom: 5px;
+  }
+  .hint.err {
+    color: #b3261e;
+    font-size: 11px;
+    min-height: 13px;
+    margin: 0 0 4px;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .form-actions button {
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  #new-collection-cancel {
+    background: #f4f4f4;
+    color: #444;
+    border-color: #ddd;
+  }
+  .primary-mini {
+    background: var(--cyan);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title-row">
+        <div class="mark"><img src="icons/icon32.png" alt="" /></div>
+        <h1>Lens⁸¹</h1>
+      </div>
+      <button id="gear" title="Settings" aria-label="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1-1.51 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09a1.7 1.7 0 0 0 1.51-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="collections-section">
+      <div class="section-head">
+        <h2>Collections</h2>
+        <div class="export-menu">
+          <button id="export-all-btn" class="mini-btn" title="Export all collections">⬇ Export All</button>
+          <div id="export-all-menu" class="export-dropdown" style="display:none;">
+            <button type="button" data-format="csv">as CSV</button>
+            <button type="button" data-format="xlsx">as Excel (.xlsx)</button>
+            <button type="button" data-format="json">as JSON</button>
+            <button type="button" data-format="bibtex">as BibTeX (.bib)</button>
+            <button type="button" data-format="md">as Markdown</button>
+            <div class="export-dropdown-divider"></div>
+            <button type="button" data-csl-style="apa">as APA references (.txt)</button>
+            <button type="button" data-csl-style="mla">as MLA references (.txt)</button>
+            <button type="button" data-csl-style="chicago">as Chicago references (.txt)</button>
+            <button type="button" data-csl-style="ieee">as IEEE references (.txt)</button>
+          </div>
+        </div>
+      </div>
+      <div id="collections-list"><!-- populated by popup.js --></div>
+      <button type="button" id="new-collection-btn" class="new-collection-row">+ New Collection</button>
+      <div id="new-collection-form" style="display:none;">
+        <input type="text" id="new-collection-input" placeholder="Name" maxlength="60" />
+        <div id="new-collection-err" class="hint err"></div>
+        <div class="form-actions">
+          <button type="button" id="new-collection-cancel">Cancel</button>
+          <button type="button" id="new-collection-create" class="primary-mini">Create</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="popup-divider" />
+
+    <div id="setup-cta">
+      <div class="banner">Add an API key (OpenRouter, Google Gemini, xAI Grok, or Groq) to start classifying results on Google Scholar.</div>
+      <button class="primary" id="open-settings-cta">Open settings</button>
+    </div>
+
+    <div id="stats">
+      <div class="counts">
+        <div class="count-chip research">
+          <span class="n" id="research-count">0</span>
+          <span class="label">Research</span>
+        </div>
+        <div class="count-chip review">
+          <span class="n" id="review-count">0</span>
+          <span class="label">Review</span>
+        </div>
+      </div>
+      <p id="stats-note">Classified so far on this tab.</p>
+    </div>
+
+    <p id="idle-note">Open a Google Scholar search results page to see Research / Review badges next to each title.</p>
+    <div id="credit">Sarthak &lt;3</div>
+  </div>
+  <script src="collections.js"></script>
+  <script src="mini-xlsx.js"></script>
+  <script src="vendor/citeproc.js"></script>
+  <script src="csl.js"></script>
+  <script src="csl-export.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

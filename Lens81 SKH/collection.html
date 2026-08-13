@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lens⁸¹: Collection</title>
+<style>
+  :root {
+    --ink: #12232a;
+    --muted: #5b7480;
+    --line: #d8ecef;
+    --surface: #ffffff;
+    --bg: #f4fbfc;
+
+    --cyan: #06aed5;
+    --cyan-ink: #045a6b;
+    --cyan-tint: #e3f8fb;
+    --cyan-line: #bdeef5;
+
+    --amber: #e8871e;
+    --amber-tint: #fdeee1;
+    --amber-ink: #8a4c0e;
+
+    --ok: #0f7a3d;
+    --ok-tint: #e7f7ee;
+    --err: #b3261e;
+    --err-tint: #fdeceb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 44px 20px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 640px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 26px 28px 24px;
+    box-shadow: 0 1px 2px rgba(18, 35, 42, 0.04), 0 8px 24px rgba(18, 35, 42, 0.05);
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .back-btn:hover { background: var(--cyan-tint); color: var(--cyan-ink); }
+
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 400;
+    font-size: 19px;
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #rename-input {
+    display: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    font: inherit;
+    font-size: 17px;
+    font-family: Georgia, serif;
+    padding: 6px 9px;
+    border: 1px solid var(--cyan-line);
+    border-radius: 8px;
+  }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .icon-btn:hover { background: var(--cyan-tint); color: var(--cyan-ink); }
+  .icon-btn.danger:hover { background: var(--err-tint); color: var(--err); border-color: #f3c7c3; }
+
+  .subtle {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 4px 0 18px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .export-menu { position: relative; }
+  .export-dropdown {
+    position: absolute;
+    right: 0;
+    top: 34px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 5;
+    min-width: 200px;
+  }
+  .export-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 9px 12px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s ease;
+  }
+  .export-dropdown button:hover { background: var(--cyan-tint); }
+  .export-dropdown-divider {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--line);
+  }
+
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn-ghost {
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-ghost:hover { background: var(--cyan-tint); }
+
+  #paper-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .paper-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+  .paper-row:hover {
+    border-color: var(--cyan-line);
+    box-shadow: 0 2px 10px rgba(6, 174, 213, 0.08);
+    transform: translateY(-1px);
+  }
+  .paper-badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .paper-badge.research { background: var(--cyan-tint); color: var(--cyan-ink); border-color: var(--cyan-line); }
+  .paper-badge.review { background: var(--amber-tint); color: var(--amber-ink); border-color: #f6dcc0; }
+  .paper-badge.unknown { background: #f1f1f1; color: #888; border-color: #e4e4e4; }
+
+  .paper-main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .paper-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .paper-title:hover { color: var(--cyan-ink); text-decoration: underline; }
+  .paper-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .paper-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .paper-actions button {
+    padding: 6px 10px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+  }
+  .paper-actions button:active { transform: scale(0.97); }
+  .btn-remove {
+    background: var(--err-tint);
+    color: var(--err);
+  }
+  .btn-remove:hover { filter: brightness(0.96); }
+  .btn-remove:disabled { opacity: 0.5; cursor: default; }
+  .btn-open {
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+    border-color: var(--cyan-line);
+  }
+  .btn-open:hover { filter: brightness(0.97); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .empty-state::before {
+    content: '📄';
+    display: block;
+    font-size: 26px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  /* --- Smart recommendations --------------------------------------- */
+  .rec-section {
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .rec-header h2 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 400;
+    font-size: 15px;
+    margin: 0;
+    flex: 1 1 auto;
+  }
+  .rec-refresh {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .rec-refresh:hover { background: var(--cyan-tint); color: var(--cyan-ink); }
+  .rec-refresh.spinning svg { animation: rec-spin 0.9s linear infinite; }
+  @keyframes rec-spin { to { transform: rotate(360deg); } }
+
+  .rec-source-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin: 2px 0 14px;
+  }
+  #rec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  @keyframes rec-fade-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .rec-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--cyan-line);
+    border-left: 3px solid var(--cyan);
+    border-radius: 10px;
+    background: var(--cyan-tint);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    animation: rec-fade-in 0.25s ease both;
+  }
+  .rec-row:hover {
+    box-shadow: 0 2px 10px rgba(6, 174, 213, 0.14);
+    transform: translateY(-1px);
+  }
+  .rec-main { flex: 1 1 auto; min-width: 0; }
+  .rec-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rec-title:hover { color: var(--cyan-ink); text-decoration: underline; }
+  .rec-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rec-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .rec-actions button {
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+  }
+  .rec-actions button:active { transform: scale(0.97); }
+  .btn-rec-add { background: var(--cyan); color: #fff; }
+  .btn-rec-add:hover { filter: brightness(0.95); }
+  .btn-rec-add:disabled { background: var(--ok-tint); color: var(--ok); cursor: default; }
+  .rec-empty, .rec-loading {
+    font-size: 12.5px;
+    color: var(--muted);
+    padding: 14px 2px;
+    text-align: center;
+  }
+
+  .mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+  }
+  .mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Small inline confirm for Delete Collection */
+  .confirm-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--err-tint);
+    border: 1px solid #f3c7c3;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: var(--err);
+  }
+  .confirm-bar.show { display: flex; }
+  .confirm-bar .confirm-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-confirm-delete { background: var(--err); color: #fff; }
+  .btn-cancel-delete { background: #fff; color: var(--ink); border-color: var(--line); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <button type="button" class="back-btn" id="back" title="Back" aria-label="Go back">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <div class="mark"><img src="icons/icon48.png" alt="" /></div>
+      <h1 id="title">📁 Loading…</h1>
+      <input type="text" id="rename-input" maxlength="60" />
+      <button type="button" class="icon-btn" id="rename-btn" title="Rename collection">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+      </button>
+      <button type="button" class="icon-btn danger" id="delete-btn" title="Delete collection">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+      </button>
+    </div>
+    <p class="subtle" id="count-note">Loading…</p>
+    <p class="subtle" id="rename-err" style="display:none; color: var(--err);"></p>
+
+    <div class="confirm-bar" id="confirm-bar">
+      <span>Delete this collection? Papers saved only here will be removed; papers saved elsewhere too will stay.</span>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel-delete" id="cancel-delete">Cancel</button>
+        <button type="button" class="btn-confirm-delete" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="export-menu">
+        <button type="button" class="btn-ghost" id="export-btn">⬇ Export Collection</button>
+        <div class="export-dropdown" id="export-menu" style="display:none;">
+          <button type="button" data-format="csv">as CSV</button>
+          <button type="button" data-format="xlsx">as Excel (.xlsx)</button>
+          <button type="button" data-format="json">as JSON</button>
+          <button type="button" data-format="bibtex">as BibTeX (.bib)</button>
+          <button type="button" data-format="md">as Markdown</button>
+          <div class="export-dropdown-divider" title="Real CSL-formatted reference lists"></div>
+          <button type="button" data-csl-style="apa">as APA references (.txt)</button>
+          <button type="button" data-csl-style="mla">as MLA references (.txt)</button>
+          <button type="button" data-csl-style="chicago">as Chicago references (.txt)</button>
+          <button type="button" data-csl-style="ieee">as IEEE references (.txt)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="paper-list"><!-- populated by collection.js --></div>
+
+    <div class="rec-section" id="rec-section">
+      <div class="rec-header">
+        <h2>🔮 Recommended for you</h2>
+        <button type="button" class="rec-refresh" id="rec-refresh" title="Refresh recommendations">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="rec-source-note" id="rec-source-note">Based on the papers already in this collection.</p>
+      <div id="rec-list"><!-- populated by collection.js --></div>
+    </div>
+  </div>
+
+  <script src="collections.js"></script>
+  <script src="mini-xlsx.js"></script>
+  <script src="vendor/citeproc.js"></script>
+  <script src="csl.js"></script>
+  <script src="csl-export.js"></script>
+  <script src="collection.js"></script>
+</body>
+</html>

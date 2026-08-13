@@ -1,0 +1,734 @@
+:root {
+  --cyan: #06aed5;
+  --cyan-ink: #045a6b;
+  --cyan-tint: #e3f8fb;
+  --cyan-line: #bdeef5;
+
+  --amber: #e8871e;
+  --amber-ink: #8a4c0e;
+  --amber-tint: #fdeee1;
+  --amber-line: #f7d9b8;
+}
+
+.paper-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 8px;
+  padding: 2px 9px 2px 7px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: arial, sans-serif;
+  vertical-align: middle;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+.paper-type .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.paper-type.research {
+  background: var(--cyan-tint);
+  color: var(--cyan-ink);
+  border-color: var(--cyan-line);
+}
+
+.paper-type.review {
+  background: var(--amber-tint);
+  color: var(--amber-ink);
+  border-color: var(--amber-line);
+}
+
+/* Low-confidence (title-only heuristic, no abstract found): dashed border
+   signals "uncertain" structurally, not just via a tooltip. */
+.paper-type.low-confidence {
+  border-style: dashed;
+}
+
+/* Pending: an instant title-based guess shown before the real classification
+   arrives. Same dashed treatment as low-confidence, plus a pulsing dot so
+   it visibly reads as "still working," not "final answer." */
+@media (prefers-reduced-motion: no-preference) {
+  .paper-type.pending .dot {
+    animation: classifier-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+.paper-type.error {
+  background: #f5f5f5;
+  color: #999;
+  border-color: transparent;
+}
+
+@keyframes classifier-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* --- "Why?" affordance on confirmed badges -------------------------------- */
+
+.paper-type.clickable {
+  cursor: pointer;
+  transition: filter 0.1s ease;
+}
+.paper-type.clickable:hover,
+.paper-type.clickable.open {
+  filter: brightness(0.95);
+}
+.paper-type.clickable:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.paper-type .caret {
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-top: 4px solid currentColor;
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.paper-type.clickable.open .caret {
+  transform: rotate(180deg);
+}
+
+/* Compact variant of the badge, reused inside the "why" panel to label each
+   model's own prediction without competing visually with the main badge. */
+.paper-type.mini {
+  flex-shrink: 0;
+  margin-left: 0;
+  padding: 1px 7px 1px 6px;
+  font-size: 10.5px;
+}
+
+/* --- "Why?" explanation panel --------------------------------------------- */
+
+.lens81-why {
+  clear: both;
+  box-sizing: border-box;
+  max-width: 480px;
+  margin: 8px 0 4px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  font-family: arial, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #3c4043;
+  animation: lens81-why-in 0.12s ease-out;
+}
+
+@keyframes lens81-why-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lens81-why-summary {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.lens81-why-models {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lens81-why-model {
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+.lens81-why-model:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.lens81-why-model-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.lens81-why-model-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  color: #5f6368;
+  font-size: 11.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lens81-why-model-reason {
+  color: #5f6368;
+}
+
+.lens81-why-note {
+  color: #5f6368;
+  font-style: italic;
+}
+
+.lens81-why-close {
+  display: block;
+  margin: 10px 0 0 auto;
+  padding: 4px 11px;
+  background: #f4f4f4;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.lens81-why-close:hover {
+  background: #ececec;
+}
+
+/* --- Collections: Save control + folder indicator ------------------------- */
+
+.lens81-collect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.lens81-folder-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--cyan-ink, #045a6b);
+  background: var(--cyan-tint, #e3f8fb);
+  border: 1px solid var(--cyan-line, #bdeef5);
+  border-radius: 999px;
+  padding: 2px 9px;
+  line-height: 1.7;
+  white-space: nowrap;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lens81-save-btn {
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: arial, sans-serif;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #d8ecef);
+  background: #fff;
+  color: #5b7480;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.1s ease, border-color 0.1s ease;
+}
+.lens81-save-btn:hover {
+  filter: brightness(0.97);
+  border-color: var(--cyan-line, #bdeef5);
+}
+.lens81-save-btn.saved {
+  color: var(--ok, #0f7a3d);
+  border-color: #bfe8cf;
+  background: var(--ok-tint, #e7f7ee);
+}
+.lens81-collect.lens81-save-open .lens81-save-btn {
+  filter: brightness(0.95);
+}
+
+/* --- Collections: "Save to Collection" popover ----------------------------
+   Deliberately mirrors .lens81-why: small, inline in the page flow (no
+   fixed-position overlay math), rounded corners, subtle shadow. */
+
+.lens81-collect-pop {
+  clear: both;
+  box-sizing: border-box;
+  width: 240px;
+  margin: 8px 0 4px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  font-family: arial, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #3c4043;
+  animation: lens81-why-in 0.12s ease-out;
+}
+
+.lens81-collect-pop-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.lens81-collect-pop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.lens81-collect-pop-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.lens81-collect-pop-row:hover {
+  background: #f5f8f9;
+}
+.lens81-collect-pop-row input[type='checkbox'] {
+  accent-color: var(--cyan, #06aed5);
+  flex-shrink: 0;
+}
+.lens81-collect-pop-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lens81-collect-pop-row.lens81-row-busy {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.lens81-collect-pop-empty {
+  color: #5f6368;
+  font-style: italic;
+  padding: 4px;
+}
+
+.lens81-collect-pop-new {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--cyan-line, #bdeef5);
+  background: var(--cyan-tint, #e3f8fb);
+  color: var(--cyan-ink, #045a6b);
+  cursor: pointer;
+}
+.lens81-collect-pop-new:hover {
+  filter: brightness(0.97);
+}
+
+.lens81-collect-pop-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid var(--line, #d8ecef);
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  margin-bottom: 6px;
+}
+.lens81-collect-pop-input:focus {
+  outline: 2px solid var(--cyan, #06aed5);
+  outline-offset: 1px;
+}
+
+.lens81-collect-pop-err {
+  color: var(--err, #b3261e);
+  font-size: 11.5px;
+  min-height: 14px;
+  margin-bottom: 4px;
+}
+
+.lens81-collect-pop-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.lens81-collect-pop-actions button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.lens81-collect-pop-cancel {
+  background: #f4f4f4;
+  color: #444;
+  border-color: #ddd;
+}
+.lens81-collect-pop-cancel:hover {
+  background: #ececec;
+}
+.lens81-collect-pop-create {
+  background: var(--cyan, #06aed5);
+  color: #fff;
+}
+.lens81-collect-pop-create:hover {
+  filter: brightness(0.95);
+}
+
+/* --- Highlight -> Find Citation (added in v6) -------------------------------
+   Appended after every existing rule; nothing above this point was changed.
+   Uses position: fixed + a very high z-index since this button/popover can
+   appear over arbitrary page content (including Google Docs' own heavily
+   layered UI), unlike the Scholar-only "why" panel and Collections popover
+   above, which are inline in the page flow. */
+
+.lens81-cite-btn-group {
+  position: fixed;
+  z-index: 2147483647;
+  display: flex;
+  align-items: stretch;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--cyan-line, #bdeef5);
+}
+
+.lens81-cite-btn {
+  font: inherit;
+  font-family: arial, sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border: none;
+  background: #fff;
+  color: var(--cyan-ink, #045a6b);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease;
+}
+.lens81-cite-btn-cite {
+  border-right: 1px solid var(--cyan-line, #bdeef5);
+}
+.lens81-cite-btn:hover {
+  background: var(--cyan-tint, #e3f8fb);
+}
+.lens81-cite-btn-find {
+  color: var(--muted, #5b7480);
+}
+.lens81-cite-btn-find:hover {
+  background: #f1f5f6;
+  color: var(--ink, #12232a);
+}
+
+.lens81-cite-pop {
+  position: fixed;
+  z-index: 2147483647;
+  box-sizing: border-box;
+  width: 280px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  font-family: arial, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #3c4043;
+  animation: lens81-why-in 0.12s ease-out;
+}
+.lens81-cite-pop.lens81-cite-pop-wide {
+  width: 340px;
+}
+
+.lens81-cite-loading,
+.lens81-cite-message {
+  color: #5f6368;
+  margin-bottom: 8px;
+}
+
+.lens81-cite-pop-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.lens81-cite-note {
+  color: #8a4c0e;
+  background: var(--amber-tint, #fdeee1);
+  border: 1px solid var(--amber-line, #f7d9b8);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+}
+
+.lens81-cite-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.lens81-cite-row {
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+.lens81-cite-row:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.lens81-cite-row-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.lens81-cite-row-meta {
+  color: #5f6368;
+  font-size: 11.5px;
+  margin-bottom: 2px;
+}
+
+.lens81-cite-row-relevance {
+  color: var(--cyan-ink, #045a6b);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.lens81-cite-row-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lens81-cite-style-select {
+  font: inherit;
+  font-size: 11.5px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  border: 1px solid var(--line, #d8ecef);
+  background: #fff;
+  max-width: 92px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.lens81-cite-insert-btn {
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--cyan, #06aed5);
+  color: #fff;
+  cursor: pointer;
+}
+.lens81-cite-insert-btn:hover {
+  filter: brightness(0.95);
+}
+
+.lens81-cite-copy-btn {
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line, #d8ecef);
+  background: #fff;
+  cursor: pointer;
+}
+.lens81-cite-copy-btn:hover {
+  background: #f5f8f9;
+}
+
+.lens81-cite-row-status {
+  font-size: 11px;
+  color: #0f7a3d;
+  font-weight: 600;
+}
+
+.lens81-cite-retro-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #8a4c0e;
+  background: var(--amber-tint, #fdeee1);
+  border: 1px solid var(--amber-line, #f7d9b8);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+.lens81-cite-retro-warning span {
+  flex: 1 1 auto;
+}
+.lens81-cite-retro-dismiss {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.lens81-cite-refs-panel {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lens81-cite-refs-label {
+  flex: 1 1 140px;
+  font-size: 11px;
+  color: #5f6368;
+}
+.lens81-cite-refs-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.lens81-cite-refs-actions button {
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line, #d8ecef);
+  background: #fff;
+  cursor: pointer;
+}
+.lens81-cite-refs-actions button:hover:not(:disabled) {
+  background: #f5f8f9;
+}
+.lens81-cite-refs-actions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.lens81-cite-refs-reset {
+  padding: 3px 6px !important;
+}
+
+.lens81-cite-addsrc {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+.lens81-cite-addsrc-toggle {
+  border: none;
+  background: none;
+  color: var(--cyan-ink, #0a7d8c);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.lens81-cite-addsrc-toggle:hover {
+  text-decoration: underline;
+}
+.lens81-cite-addsrc-body {
+  margin-top: 8px;
+}
+.lens81-cite-addsrc-help {
+  font-size: 11px;
+  color: #5f6368;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+.lens81-cite-addsrc-input {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 11.5px;
+  padding: 6px 8px;
+  border: 1px solid var(--line, #d8ecef);
+  border-radius: 6px;
+  resize: vertical;
+  margin-bottom: 6px;
+}
+.lens81-cite-addsrc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lens81-cite-addsrc-row button {
+  font: inherit;
+  font-size: 11.5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line, #d8ecef);
+  background: #fff;
+  cursor: pointer;
+}
+.lens81-cite-addsrc-row button:hover {
+  background: #f5f8f9;
+}
+.lens81-cite-addsrc-file {
+  font-size: 11.5px;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px dashed var(--line, #d8ecef);
+}
+.lens81-cite-addsrc-file:hover {
+  background: #f5f8f9;
+}
+.lens81-cite-addsrc-status {
+  font-size: 11px;
+  color: #5f6368;
+  margin-top: 6px;
+  min-height: 14px;
+}
+.lens81-cite-addsrc-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.lens81-cite-close {
+  display: block;
+  margin: 6px 0 0 auto;
+  padding: 4px 11px;
+  background: #f4f4f4;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.lens81-cite-close:hover {
+  background: #ececec;
+}
