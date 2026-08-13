@@ -38,7 +38,7 @@ Google Scholar doesn't re-render the whole page on every interaction, so the scr
 For each result, it reads the title and immediately renders a dashed, low-confidence badge based on a simple keyword regex (`survey`, `review`, `meta-analysis`, etc.) — this is what makes the page feel instant even though the real answer takes a moment to arrive.
 
 
-A step-by-step walkthrough of the pipeline, the browser APIs each step relies on, and the external services involved — with links to the actual documentation for anything you might want to verify or extend.
+A step-by-step walkthrough of the pipeline, the browser APIs each step relies on and the external services involved — with links to the actual documentation for anything you might want to verify or extend.
 
 ## Overview
 
@@ -128,4 +128,4 @@ The popup uses [`chrome.tabs.query`](https://developer.chrome.com/docs/extension
 
 - Your **OpenRouter API key** is sent only to `openrouter.ai`, in the `Authorization` header of classification and test requests. It never leaves your browser otherwise.
 - **Paper titles and abstracts** are sent to Semantic Scholar, OpenAlex (both to look up the abstract), and OpenRouter (to classify it).
-- Nothing is sent to any server the extension's author controls..there isn't one.
+- Nothing is sent to any server the extension's author controls...there isn't one.
