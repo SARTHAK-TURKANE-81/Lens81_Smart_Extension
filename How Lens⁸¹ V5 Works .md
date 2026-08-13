@@ -1,7 +1,7 @@
 # Lens⁸¹ v5 : How It Works
 
 This document describes the version of the extension currently in this
-conversation (the flat file set you last uploaded — referred to here as
+conversation (the flat file set you last uploaded - referred to here as
 **v5**, as distinct from the `lens81_v6.zip` bundle from earlier). It's a
 technical walkthrough of each file and how they fit together, not a user
 guide (see `README.md` for that).
