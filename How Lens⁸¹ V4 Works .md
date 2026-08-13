@@ -215,6 +215,7 @@ than that, they start failing partway through while other configured
 models keep succeeding. The Settings page already warns against these;
 the "why" panel is now where you'd actually see it happening.
 
+
 ### 3.7 Per-tab counters and the toolbar badge
 
 `recordStat()` increments a `{research, review, total}` counter kept in
