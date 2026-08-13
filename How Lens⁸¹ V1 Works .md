@@ -2,6 +2,8 @@
 
 A step-by-step walkthrough of the pipeline, the browser APIs each step relies on, and the external services involved — with links to the actual documentation for anything you might want to verify or extend.
 
+
+
 ## Overview
 
 ```
