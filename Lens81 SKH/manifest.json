@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "Lens\u2078\u00b9",
+  "version": "1.1.0",
+  "description": "Labels Google Scholar results as Research or Review papers using their abstracts and an LLM.",
+  "permissions": ["storage", "activeTab", "clipboardRead", "clipboardWrite"],
+  "host_permissions": [
+    "https://api.semanticscholar.org/*",
+    "https://api.openalex.org/*",
+    "https://api.crossref.org/*",
+    "https://openrouter.ai/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.x.ai/*",
+    "https://api.groq.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://scholar.google.com/*"],
+      "css": ["styles.css"],
+      "js": ["collections.js", "collections-content.js", "content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "css": ["styles.css"],
+      "js": ["vendor/citeproc.js", "csl.js", "refparse.js", "cite.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["vendor/styles/all/*.csl", "vendor/locales/all/*.xml", "cite-styles.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Lens\u2078\u00b9",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "options_page": "options.html"
+}

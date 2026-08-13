@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lens⁸¹: Settings</title>
+<style>
+  :root {
+    --ink: #12232a;
+    --muted: #5b7480;
+    --line: #d8ecef;
+    --surface: #ffffff;
+    --bg: #f4fbfc;
+
+    --cyan: #06aed5;
+    --cyan-ink: #045a6b;
+    --cyan-tint: #e3f8fb;
+    --cyan-line: #bdeef5;
+
+    --amber: #e8871e;
+    --amber-tint: #fdeee1;
+    --amber-ink: #8a4c0e;
+
+    --ok: #0f7a3d;
+    --ok-tint: #e7f7ee;
+    --err: #b3261e;
+    --err-tint: #fdeceb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 44px 20px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px 28px 24px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .back-btn:hover {
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+  }
+  .mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+  }
+  .mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 400;
+    font-size: 19px;
+    margin: 0;
+    letter-spacing: 0.2px;
+  }
+  p.lede {
+    margin: 4px 0 22px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .banner {
+    display: none;
+    background: var(--cyan-tint);
+    border: 1px solid var(--cyan-line);
+    color: var(--cyan-ink);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .banner.show { display: block; }
+
+  label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .field { margin-bottom: 18px; }
+  .input-row {
+    position: relative;
+  }
+  input[type="password"],
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+  }
+  select { cursor: pointer; }
+  input.key-input { padding-right: 60px; }
+  input:focus {
+    outline: 2px solid var(--cyan);
+    outline-offset: 1px;
+  }
+  .toggle-visibility {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--cyan-ink);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .toggle-visibility:hover { background: var(--cyan-tint); }
+  .hint {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+  .hint a { color: var(--cyan-ink); }
+
+  .quick-picks {
+    background: #fafcfc;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: -4px 0 18px;
+  }
+  .quick-picks-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .quick-picks ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+  }
+  .quick-picks li {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .quick-picks li strong {
+    color: var(--ink);
+  }
+  .quick-picks code {
+    font-size: 11px;
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  button:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+  #save {
+    background: var(--cyan);
+    color: #fff;
+  }
+  #save:hover { filter: brightness(0.95); }
+  .row-test {
+    background: var(--cyan-tint);
+    color: var(--cyan-ink);
+    border-color: var(--cyan-line);
+  }
+  .row-test:hover { filter: brightness(0.97); }
+  #clear-cache {
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .pill-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .pill-status.ok { background: var(--ok-tint); color: var(--ok); }
+  .pill-status.err { background: var(--err-tint); color: var(--err); }
+  .pill-status.neutral { background: #f1f1f1; color: #666; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 24px 0 20px;
+  }
+  .section-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .cache-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  #lock-remove-btn {
+    color: var(--err, #b3261e);
+    border-color: #f3c9c5;
+  }
+
+  .model-row {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px 4px;
+    margin-bottom: 14px;
+  }
+  .model-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .model-row-title {
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .model-row-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .row-fallback {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 2px 0 12px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .row-fallback input[type="checkbox"] {
+    margin: 2px 0 0;
+    flex-shrink: 0;
+    accent-color: var(--cyan);
+  }
+  .row-fallback em {
+    font-style: normal;
+    opacity: 0.85;
+  }
+  .row-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 14px;
+  }
+  .row-actions button {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  #add-model-row {
+    background: #fff;
+    color: var(--cyan-ink);
+    border-color: var(--cyan-line);
+    width: 100%;
+  }
+  #credit {
+    position: fixed;
+    bottom: 10px;
+    right: 14px;
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.6;
+    user-select: none;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <button type="button" class="back-btn" id="back" title="Back" aria-label="Go back">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <div class="mark"><img src="icons/icon48.png" alt="" /></div>
+      <h1>Lens⁸¹</h1>
+    </div>
+
+    <div id="lock-screen" style="display:none;">
+      <p class="hint" style="margin: 0 0 10px;">This page holds your API keys. Enter your passcode to continue.</p>
+      <div class="input-row">
+        <input type="password" id="lock-passcode" placeholder="Passcode" autocomplete="off" />
+        <button id="lock-unlock" style="margin-left:8px;">Unlock</button>
+      </div>
+      <p class="hint" id="lock-error" style="color: var(--err, #b3261e); display:none; margin: 8px 0 0;"></p>
+      <p class="hint" style="margin: 14px 0 0;">
+        <a href="#" id="lock-forgot">Forgot your passcode?</a>
+      </p>
+    </div>
+
+    <div id="settings-content" style="display:none;">
+    <p class="lede">Classification runs through your own API keys: OpenRouter, Google Gemini, xAI Grok, or Groq, mixed and matched per row. Keys stay in this browser and are sent only straight to whichever provider that row uses, never bundled into the extension, never routed anywhere else. Configure 1–5 provider + key + model rows; every configured model classifies each paper in parallel and the results are combined into a single ensemble prediction. Check "only use if needed" on a row to hold that key back as a backup, only spending it when the others fail.</p>
+
+    <div id="banner" class="banner">Add at least one key and model below, then hit <strong>Test</strong> to turn on classification.</div>
+
+    <div id="model-rows"><!-- populated by options.js --></div>
+
+    <div class="quick-picks">
+      <p class="quick-picks-title">Quick picks: a fast, cheap default model per provider:</p>
+      <ul>
+        <li><strong>OpenRouter</strong>: <code>~anthropic/claude-haiku-latest</code> (self-updating, won't go stale)</li>
+        <li><strong>Google Gemini</strong>: <code>gemini-2.5-flash</code></li>
+        <li><strong>xAI Grok</strong>: <code>grok-4-fast</code></li>
+        <li><strong>Groq</strong>: <code>llama-3.3-70b-versatile</code></li>
+      </ul>
+      <p class="hint" style="margin: 6px 0 0;">
+        Avoid OpenRouter's <code>:free</code> models (capped ~20 requests/minute) and any model with mandatory
+        reasoning (slower, no accuracy benefit here). Model catalogs and slugs change over time for every
+        provider, so double-check the current one on the provider's own site rather than trusting a hardcoded
+        default. Whichever provider you pick, click that row's <strong>Test</strong> button after filling it in.
+      </p>
+    </div>
+
+    <div class="actions">
+      <button id="save">Save</button>
+      <span id="status" class="pill-status neutral" style="display:none;"></span>
+    </div>
+
+    <hr />
+
+    <div class="section-label">Citation Finder (optional AI relevance check)</div>
+    <p class="hint" style="margin-top:0;">
+      Highlight → Find Citation is free by default: keyword matching only, no AI, no cost, using
+      whatever's configured above or nothing at all. Add a <strong>separate</strong> key here to let
+      an AI double-check each candidate's true relevance before showing it (catches papers that share
+      vocabulary with your passage without actually being on-topic). This key is used
+      <strong>only</strong> for citation checks, never for classification, and never mixed with the
+      model rows above. Leave it blank to keep citation search fully free.
+    </p>
+    <div id="cite-row"><!-- populated by options.js --></div>
+
+    <div class="field" style="margin-top: 14px; max-width: 320px;">
+      <label for="cite-threshold">Match confidence threshold</label>
+      <div class="input-row">
+        <input type="number" id="cite-threshold" min="0" max="100" step="1" placeholder="42" />
+        <span class="hint" style="margin: 0 0 0 8px; white-space: nowrap;">0–100</span>
+      </div>
+      <p class="hint" style="margin: 6px 0 0;">
+        A candidate paper needs at least this much combined text-similarity confidence before it's
+        suggested as a citation. Lower it if you're getting too few results (more false positives);
+        raise it if you're seeing weak or unrelated matches. Default is 42.
+      </p>
+    </div>
+
+    <div class="actions" style="margin-top: 2px;">
+      <button id="save-cite">Save citation key</button>
+      <span id="cite-status" class="pill-status neutral" style="display:none;"></span>
+    </div>
+
+    <hr />
+
+    <div class="section-label">Cached classifications</div>
+    <p class="hint" style="margin-top:0;">Results are cached for 30 days per paper title, so revisiting a search won't re-spend API calls.</p>
+    <div class="cache-row">
+      <button id="clear-cache">Clear cache</button>
+      <span id="clear-status" class="hint" style="margin:0;"></span>
+    </div>
+
+    <hr />
+
+    <div class="section-label">Page protection</div>
+    <p class="hint" style="margin-top:0;" id="lock-status-note">
+      This page holds your API keys. A passcode stops someone else using this same browser from opening
+      Settings and reading them, but the keys themselves are still stored in plain form for the extension
+      to use automatically. It won't stop someone with direct access to this browser's developer tools.
+    </p>
+    <div id="lock-setup-row" class="cache-row">
+      <button id="lock-set-btn">Set a passcode</button>
+      <span id="lock-setup-status" class="hint" style="margin:0;"></span>
+    </div>
+    <div id="lock-manage-row" class="cache-row" style="display:none;">
+      <button id="lock-change-btn">Change passcode</button>
+      <button id="lock-remove-btn">Remove passcode</button>
+      <span id="lock-manage-status" class="hint" style="margin:0;"></span>
+    </div>
+    </div>
+  </div>
+  <div id="credit">Sarthak &lt;3</div>
+
+  <script src="options.js"></script>
+</body>
+</html>
